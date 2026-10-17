@@ -244,7 +244,7 @@ function CalendarCountdownSection() {
                             {isNikah ? "★ Nikah Ceremony" : "★ Walima Reception"}
                           </p>
                           <p className="font-sans text-[9px] text-ivory-warm/80">
-                            {isNikah ? "21 March · 11:00 AM" : "23 March · 6:30 PM"}
+                            {isNikah ? "21 March · 11:00 AM" : "23 March · 12:00 PM"}
                           </p>
                         </div>
                       )}
@@ -305,7 +305,7 @@ function CalendarCountdownSection() {
                       23 Mar 2027 &nbsp;·&nbsp; <span className="text-gold-antique font-medium">Walima</span>
                     </p>
                     <p className="font-sans text-xs text-ivory-warm/75">
-                      LKS Mahal, Trichy &nbsp;·&nbsp; 6:30 PM
+                      LKS Mahal, Trichy &nbsp;·&nbsp; 12:00 PM
                     </p>
                   </div>
                 </div>

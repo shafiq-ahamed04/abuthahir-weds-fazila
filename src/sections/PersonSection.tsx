@@ -136,7 +136,7 @@ function PersonSection({ role }: PersonSectionProps) {
             </div>
           </div>
 
-          {/* Image Column: Real Photo in Cinematic Imperial Arch Portal */}
+          {/* Right Column: Illuminated Islamic Name & Calligraphy Crest */}
           <div
             ref={imageColRef}
             className={`z-10 w-full flex justify-center ${
@@ -146,10 +146,7 @@ function PersonSection({ role }: PersonSectionProps) {
             }`}
           >
             <CinematicPhotoPortal
-              src={person.image}
-              alt={`${person.role} — ${person.name}`}
               aspectRatio="4/5"
-              objectPosition={isGroom ? "center 18%" : "center 22%"}
               role={role}
             />
           </div>

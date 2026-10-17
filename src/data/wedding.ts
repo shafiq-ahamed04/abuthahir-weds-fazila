@@ -77,13 +77,13 @@ export const weddingData: WeddingData = {
       name: "Abuthahir",
       role: "The Groom",
       bio: "A man of faith, kindness and purpose, looking forward to this new chapter with the blessings of Allah.",
-      image: "/groom-photo.jpg",
+      image: "",
     },
     bride: {
       name: "Fazila",
       role: "The Bride",
       bio: "A woman of grace, faith and beautiful character, stepping into this journey with trust in His plan.",
-      image: "/bride-photo.jpg",
+      image: "",
     },
     hashtag: "#AbuthahirAndFazila",
     tagline: "A JOURNEY OF FAITH, LOVE AND A BEAUTIFUL BEGINNING",
@@ -128,7 +128,7 @@ export const weddingData: WeddingData = {
     quoteRef: "SURAH AN-NABA (78:8)",
     intro:
       "A journey brought together by His Qadr, strengthened by faith, and filled with hope for a blessed future, Insha'Allah.",
-    image: "/couple-photo.jpg",
+    image: "",
   },
   verses: {
     bismillah: {

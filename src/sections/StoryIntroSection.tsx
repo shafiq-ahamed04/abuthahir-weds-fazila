@@ -132,18 +132,13 @@ function StoryIntroSection() {
             </div>
           </div>
 
-          {/* Right Image Column (Couple Illustration) */}
-          {/* Right Image Column (Couple Photo in Luxury Architectural Portal) */}
+          {/* Right Column: Illuminated Sacred Union Crest */}
           <div
             ref={imageColRef}
             className="lg:col-span-6 relative flex justify-center lg:justify-end w-full"
           >
             <CinematicPhotoPortal
-              src={story.image}
-              alt="Abuthahir & Fazila — Two Hearts One Deen"
-              aspectRatio="3/4"
-              objectPosition="center 16%"
-              priority
+              aspectRatio="4/5"
               role="couple"
             />
           </div>

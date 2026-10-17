@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useCallback, useRef } from "react";
 import Image from "next/image";
-import { ArabesqueCorner, IslamicStar } from "@/components/elements/IslamicElements";
 
 interface OpeningAnimationProps {
   onComplete: () => void;
@@ -10,7 +9,6 @@ interface OpeningAnimationProps {
 
 export default function OpeningAnimation({ onComplete }: OpeningAnimationProps) {
   const [isExiting, setIsExiting] = useState(false);
-  const [progress, setProgress] = useState(0);
   const hasTriggeredRef = useRef(false);
 
   const handleEnter = useCallback(() => {
@@ -18,10 +16,10 @@ export default function OpeningAnimation({ onComplete }: OpeningAnimationProps) 
     hasTriggeredRef.current = true;
     setIsExiting(true);
 
-    // After fade out completes, call onComplete to unmount
+    // After opening transition completes, unmount opening screen
     setTimeout(() => {
       onComplete();
-    }, 700);
+    }, 750);
   }, [onComplete]);
 
   // Lock body scroll while opening screen is active
@@ -33,25 +31,13 @@ export default function OpeningAnimation({ onComplete }: OpeningAnimationProps) 
     };
   }, []);
 
-  // Smooth progress timer (2.8 seconds total duration)
+  // Auto transition to 1st page after opening and shining sequence (~2.4s)
   useEffect(() => {
-    const duration = 2800;
-    const interval = 30;
-    const increment = (interval / duration) * 100;
+    const timer = setTimeout(() => {
+      handleEnter();
+    }, 2400);
 
-    const timer = setInterval(() => {
-      setProgress((prev) => {
-        const next = prev + increment;
-        if (next >= 100) {
-          clearInterval(timer);
-          handleEnter();
-          return 100;
-        }
-        return next;
-      });
-    }, interval);
-
-    return () => clearInterval(timer);
+    return () => clearTimeout(timer);
   }, [handleEnter]);
 
   // Keyboard navigation (Enter / Space / Escape)
@@ -71,145 +57,160 @@ export default function OpeningAnimation({ onComplete }: OpeningAnimationProps) 
       onClick={handleEnter}
       role="dialog"
       aria-modal="true"
-      aria-label="Wedding Invitation Opening"
-      className={`fixed inset-0 z-[9999] flex flex-col items-center justify-between p-6 sm:p-10 cursor-pointer select-none overflow-hidden transition-all duration-700 ease-out ${
+      aria-label="Welcome — Abuthahir & Fazila"
+      className={`fixed inset-0 z-[9999] flex items-center justify-center cursor-pointer select-none overflow-hidden transition-all duration-750 ease-out ${
         isExiting
-          ? "opacity-0 scale-105 pointer-events-none filter blur-sm"
+          ? "opacity-0 scale-110 pointer-events-none filter blur-md"
           : "opacity-100 scale-100"
       }`}
       style={{
+        backgroundColor: "#02271F",
         background:
-          "radial-gradient(circle at 50% 45%, #053b2f 0%, #02271f 50%, #011712 100%)",
+          "radial-gradient(circle at 50% 50%, #064537 0%, #02271F 55%, #01140F 100%)",
       }}
     >
-      {/* Background Islamic star geometry subtle overlay */}
+      {/* Dynamic inline styles for opening bloom and metallic shine sweep */}
+      <style jsx>{`
+        @keyframes openingBloom {
+          0% {
+            opacity: 0;
+            transform: scale(0.65);
+            filter: blur(8px) drop-shadow(0 0 10px rgba(198, 161, 91, 0.1));
+          }
+          60% {
+            opacity: 1;
+            transform: scale(1.02);
+            filter: blur(0px) drop-shadow(0 0 35px rgba(198, 161, 91, 0.7));
+          }
+          100% {
+            opacity: 1;
+            transform: scale(1);
+            filter: blur(0px) drop-shadow(0 0 45px rgba(198, 161, 91, 0.8));
+          }
+        }
+
+        @keyframes shineSweep {
+          0% {
+            transform: translateX(-160%) rotate(25deg);
+            opacity: 0;
+          }
+          20% {
+            opacity: 0.9;
+          }
+          60% {
+            opacity: 1;
+          }
+          85% {
+            opacity: 0.8;
+          }
+          100% {
+            transform: translateX(180%) rotate(25deg);
+            opacity: 0;
+          }
+        }
+
+        @keyframes radiantAura {
+          0%, 100% {
+            transform: scale(0.9);
+            opacity: 0.35;
+          }
+          50% {
+            transform: scale(1.15);
+            opacity: 0.7;
+          }
+        }
+
+        @keyframes glintSparkle {
+          0%, 30% {
+            opacity: 0;
+            transform: scale(0) rotate(0deg);
+          }
+          50% {
+            opacity: 1;
+            transform: scale(1.3) rotate(90deg);
+          }
+          75% {
+            opacity: 0.8;
+            transform: scale(0.9) rotate(180deg);
+          }
+          100% {
+            opacity: 0;
+            transform: scale(0) rotate(270deg);
+          }
+        }
+
+        .animate-opening-bloom {
+          animation: openingBloom 1.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .animate-shine-sweep {
+          animation: shineSweep 1.3s cubic-bezier(0.4, 0, 0.2, 1) 0.55s forwards;
+        }
+
+        .animate-radiant-aura {
+          animation: radiantAura 2.2s ease-in-out infinite;
+        }
+
+        .animate-glint-sparkle {
+          animation: glintSparkle 1.1s ease-in-out 0.8s forwards;
+        }
+      `}</style>
+
+      {/* Atmospheric Radial Golden Glow Center */}
+      <div className="absolute w-[340px] sm:w-[480px] h-[340px] sm:h-[480px] rounded-full bg-gold-antique/25 blur-3xl pointer-events-none animate-radiant-aura" />
+
+      {/* Expanding opening halo rings */}
       <div
-        className="absolute inset-0 pointer-events-none opacity-25"
+        className="absolute w-56 h-56 sm:w-72 sm:h-72 rounded-full border border-gold-antique/30 pointer-events-none"
         style={{
-          backgroundImage:
-            "radial-gradient(rgba(198, 161, 91, 0.25) 1px, transparent 1px)",
-          backgroundSize: "28px 28px",
+          animation: "ping 3s cubic-bezier(0, 0, 0.2, 1) infinite",
         }}
       />
+      <div className="absolute w-48 h-48 sm:w-64 sm:h-64 rounded-full border border-gold-antique/20 pointer-events-none" />
 
-      {/* Decorative Gold Arabesque Corners */}
-      <div className="absolute top-4 left-4 sm:top-6 sm:left-6 pointer-events-none">
-        <ArabesqueCorner position="top-left" className="w-12 h-12 text-gold-antique/70" />
-      </div>
-      <div className="absolute top-4 right-4 sm:top-6 sm:right-6 pointer-events-none">
-        <ArabesqueCorner position="top-right" className="w-12 h-12 text-gold-antique/70" />
-      </div>
-      <div className="absolute bottom-4 left-4 sm:bottom-6 sm:left-6 pointer-events-none">
-        <ArabesqueCorner position="bottom-left" className="w-12 h-12 text-gold-antique/70" />
-      </div>
-      <div className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 pointer-events-none">
-        <ArabesqueCorner position="bottom-right" className="w-12 h-12 text-gold-antique/70" />
-      </div>
+      {/* Pure Logo Presentation Container */}
+      <div className="relative animate-opening-bloom z-10 flex items-center justify-center">
+        {/* Logo Image Box with shining mask */}
+        <div className="relative w-44 h-44 sm:w-56 sm:h-56 md:w-64 md:h-64 overflow-hidden rounded-full p-2 flex items-center justify-center">
+          <Image
+            src="/af-gold-monogram.png"
+            alt="Abuthahir & Fazila Logo"
+            fill
+            priority
+            className="object-contain"
+            sizes="(max-width: 640px) 176px, (max-width: 768px) 224px, 256px"
+          />
 
-      {/* Outer border trim */}
-      <div className="absolute inset-3 sm:inset-5 border border-gold-antique/25 pointer-events-none rounded-sm" />
-      <div className="absolute inset-4 sm:inset-6 border border-gold-antique/15 pointer-events-none rounded-sm" />
-
-      {/* Top Header */}
-      <div className="relative z-10 pt-4 sm:pt-6 flex flex-col items-center text-center">
-        <p className="font-sans text-[10px] sm:text-xs tracking-[0.35em] text-gold-antique/80 uppercase font-medium">
-          IN THE NAME OF ALLAH, THE MOST BENEFICENT, THE MOST MERCIFUL
-        </p>
-        <div className="flex items-center gap-2 mt-2">
-          <span className="w-8 sm:w-12 h-[1px] bg-gradient-to-r from-transparent to-gold-antique/50" />
-          <IslamicStar size={12} className="text-gold-antique/80" />
-          <span className="w-8 sm:w-12 h-[1px] bg-gradient-to-l from-transparent to-gold-antique/50" />
-        </div>
-      </div>
-
-      {/* Center Stage: Royal Monogram Logo + Sacred Bismillah + Couple Names */}
-      <div className="relative z-10 flex flex-col items-center justify-center text-center my-auto py-4">
-        {/* Sacred Bismillah Calligraphy */}
-        <p className="font-serif text-lg sm:text-2xl text-gold-antique/90 tracking-widest mb-4 sm:mb-6 drop-shadow-[0_2px_12px_rgba(198,161,91,0.3)]">
-          بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ
-        </p>
-
-        {/* Logo Container with Golden Radiant Halo */}
-        <div className="relative flex items-center justify-center my-2">
-          {/* Pulsing ambient gold aura */}
-          <div className="absolute -inset-8 rounded-full bg-gold-antique/20 blur-2xl animate-pulse pointer-events-none" />
-
-          {/* Rotating decorative geometric ring */}
+          {/* Brilliant Golden Metallic Shine Sweep Overlay */}
           <div
-            className="absolute -inset-5 rounded-full border border-gold-antique/30 pointer-events-none"
+            className="absolute inset-0 pointer-events-none animate-shine-sweep z-20"
             style={{
-              animation: "spin 24s linear infinite",
-              borderStyle: "dashed",
+              width: "140%",
+              height: "220%",
+              top: "-60%",
+              left: "-20%",
+              background:
+                "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.08) 30%, rgba(255,245,200,0.85) 50%, rgba(255,215,0,0.6) 65%, transparent 100%)",
+              mixBlendMode: "screen",
             }}
           />
-
-          {/* Inner gold glowing ring */}
-          <div className="absolute -inset-2 rounded-full border-2 border-gold-antique/60 shadow-[0_0_25px_rgba(198,161,91,0.5)] pointer-events-none" />
-
-          {/* Royal Logo Image */}
-          <div className="relative w-32 h-32 sm:w-40 sm:h-40 md:w-44 md:h-44 transition-transform duration-700 hover:scale-105">
-            <Image
-              src="/af-gold-monogram.png"
-              alt="Abuthahir & Fazila Wedding Logo"
-              fill
-              priority
-              className="object-contain drop-shadow-[0_4px_30px_rgba(198,161,91,0.7)]"
-              sizes="(max-width: 640px) 128px, (max-width: 768px) 160px, 176px"
-            />
-          </div>
         </div>
 
-        {/* Title & Couple Names */}
-        <div className="mt-5 sm:mt-6 space-y-1 sm:space-y-2">
-          <p className="font-sans text-[10px] sm:text-[11px] uppercase tracking-[0.4em] text-gold-antique font-semibold">
-            THE WEDDING INVITATION
-          </p>
-          <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl text-ivory-warm font-light tracking-wide drop-shadow-[0_2px_16px_rgba(0,0,0,0.8)]">
-            Abuthahir &amp; Fazila
-          </h1>
-          <p className="font-serif italic text-xs sm:text-sm text-ivory-warm/75 tracking-wider">
-            Sunday, 21 March 2027 · Insha&apos;Allah
-          </p>
-        </div>
-      </div>
-
-      {/* Bottom Section: Progress Bar & Open Button */}
-      <div className="relative z-10 pb-4 sm:pb-6 flex flex-col items-center text-center space-y-3">
-        {/* Elegant Open Invitation Button */}
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            handleEnter();
-          }}
-          className="group relative inline-flex items-center gap-2.5 px-6 sm:px-8 py-2.5 sm:py-3 rounded-full border border-gold-antique/60 bg-emerald-deep/80 hover:bg-gold-antique hover:text-emerald-deep text-gold-antique font-sans text-xs tracking-[0.25em] uppercase transition-all duration-300 shadow-[0_0_20px_rgba(198,161,91,0.25)] hover:shadow-[0_0_30px_rgba(198,161,91,0.6)] cursor-pointer"
-        >
-          <IslamicStar size={12} className="transition-transform duration-300 group-hover:rotate-45" />
-          <span>OPEN INVITATION</span>
+        {/* Shimmering Glint Star Sparkle on Logo Crest */}
+        <div className="absolute -top-1 right-6 sm:top-2 sm:right-8 pointer-events-none z-30 animate-glint-sparkle">
           <svg
-            width="12"
-            height="12"
+            width="28"
+            height="28"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            className="transition-transform duration-300 group-hover:translate-x-1"
+            className="text-ivory-warm filter drop-shadow-[0_0_8px_#FFF5C8]"
           >
-            <polyline points="9 18 15 12 9 6" />
+            <path
+              d="M12 0L14.2 9.8L24 12L14.2 14.2L12 24L9.8 14.2L0 12L9.8 9.8L12 0Z"
+              fill="currentColor"
+            />
           </svg>
-        </button>
-
-        {/* Animated Progress Indicator */}
-        <div className="w-40 sm:w-52 h-[2px] bg-gold-antique/20 rounded-full overflow-hidden">
-          <div
-            className="h-full bg-gradient-to-r from-gold-antique/40 via-gold-antique to-gold-antique/90 rounded-full transition-all ease-linear"
-            style={{ width: `${progress}%` }}
-          />
         </div>
-
-        <p className="font-sans text-[9px] sm:text-[10px] tracking-widest text-ivory-warm/50 uppercase">
-          Tap anywhere to open
-        </p>
       </div>
     </div>
   );

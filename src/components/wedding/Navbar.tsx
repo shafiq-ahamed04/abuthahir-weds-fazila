@@ -30,9 +30,8 @@ export default function Navbar({ onNavigateHome }: NavbarProps) {
 
   const navLinks = [
     { label: "Home", href: "#" },
-    { label: "Our Story", href: "#our-story" },
+    { label: "Our Story", href: "#story" },
     { label: "Events", href: "#celebrations" },
-    { label: "Venue", href: "#celebrations" },
     { label: "Verses", href: "#quranic-verses" },
     { label: "Calendar", href: "#calendar" },
     { label: "Dua", href: "#dua" },

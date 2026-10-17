@@ -6,6 +6,8 @@ import SmoothScrollProvider from "@/components/wedding/SmoothScrollProvider";
 import IslamicSkylineDivider from "@/components/wedding/IslamicSkylineDivider";
 import MobileBottomDock from "@/components/wedding/MobileBottomDock";
 
+import InvitationCover from "@/components/wedding/InvitationCover";
+import BismillahScene from "./BismillahScene";
 import StoryIntroSection from "./StoryIntroSection";
 import PersonSection from "./PersonSection";
 import QuranicReflectionsSection from "./QuranicReflectionsSection";
@@ -64,8 +66,14 @@ export default function MainContent() {
           }}
         />
 
-        <main className="relative z-10 pt-16 sm:pt-20">
-          {/* Section 1: Our Story (Two Hearts One Deen + Couple Photo Portal) */}
+        <main className="relative z-10">
+          {/* Section 0: Grand Invitation Cover Hero */}
+          <InvitationCover />
+
+          {/* Section 1: Sacred Bismillah Scene */}
+          <BismillahScene isVisible={true} />
+
+          {/* Section 2: Our Story (Two Hearts One Deen + Couple Photo Portal) */}
           <StoryIntroSection />
 
           <IslamicSkylineDivider variant="dome" />

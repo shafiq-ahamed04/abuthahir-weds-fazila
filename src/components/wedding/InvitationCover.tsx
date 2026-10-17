@@ -2,18 +2,15 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import Image from "next/image";
-import CinematicArchitecture from "./CinematicArchitecture";
-import EnterInvitationButton from "./EnterInvitationButton";
 import GoldenButterflies from "./GoldenButterflies";
 import { ArabesqueCorner, IslamicStar } from "@/components/elements/IslamicElements";
 
 interface InvitationCoverProps {
-  onEnter: () => void;
+  onEnter?: () => void;
 }
 
 export default function InvitationCover({ onEnter }: InvitationCoverProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const architectureRef = useRef<HTMLDivElement>(null);
   const archPortalRef = useRef<HTMLDivElement>(null);
   const logoHaloRef = useRef<HTMLDivElement>(null);
   const logoWrapRef = useRef<HTMLDivElement>(null);
@@ -21,11 +18,8 @@ export default function InvitationCover({ onEnter }: InvitationCoverProps) {
   const titleRef = useRef<HTMLHeadingElement>(null);
   const dividerRef = useRef<HTMLDivElement>(null);
   const dateBlockRef = useRef<HTMLDivElement>(null);
-  const buttonWrapRef = useRef<HTMLDivElement>(null);
-  const scrollIndicatorRef = useRef<HTMLDivElement>(null);
+  const scrollIndicatorRef = useRef<HTMLButtonElement>(null);
 
-  const [isExiting, setIsExiting] = useState(false);
-  const [isReady, setIsReady] = useState(false);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
   // Detect reduced motion preference
@@ -37,7 +31,7 @@ export default function InvitationCover({ onEnter }: InvitationCoverProps) {
     return () => mq.removeEventListener("change", handler);
   }, []);
 
-  // ── GSAP Coordinated Cinematic Entrance ──
+  // ── GSAP Coordinated Entrance ──
   useEffect(() => {
     let ctx: { revert: () => void } | null = null;
 
@@ -46,7 +40,6 @@ export default function InvitationCover({ onEnter }: InvitationCoverProps) {
 
       ctx = gsap.context(() => {
         const allElements = [
-          architectureRef.current,
           archPortalRef.current,
           logoHaloRef.current,
           logoWrapRef.current,
@@ -54,18 +47,15 @@ export default function InvitationCover({ onEnter }: InvitationCoverProps) {
           titleRef.current,
           dividerRef.current,
           dateBlockRef.current,
-          buttonWrapRef.current,
           scrollIndicatorRef.current,
         ];
 
         if (prefersReducedMotion) {
           gsap.set(allElements, { opacity: 1, y: 0, scale: 1, clearProps: "all" });
-          setIsReady(true);
           return;
         }
 
         // Initial states: keep arch portal and monogram visible for instant LCP paint
-        gsap.set(architectureRef.current, { opacity: 0 });
         gsap.set(archPortalRef.current, { opacity: 1, scale: 0.98, y: 8 });
         gsap.set(logoHaloRef.current, { opacity: 0.4, scale: 0.85 });
         gsap.set(logoWrapRef.current, { opacity: 1, scale: 0.94, y: 6 });
@@ -73,20 +63,11 @@ export default function InvitationCover({ onEnter }: InvitationCoverProps) {
         gsap.set(titleRef.current, { opacity: 0, y: 14 });
         gsap.set(dividerRef.current, { opacity: 0, scaleX: 0 });
         gsap.set(dateBlockRef.current, { opacity: 0, y: 10 });
-        gsap.set(buttonWrapRef.current, { opacity: 0, y: 12 });
         gsap.set(scrollIndicatorRef.current, { opacity: 0, y: 8 });
 
         const tl = gsap.timeline({
           defaults: { ease: "power3.out" },
-          onComplete: () => setIsReady(true),
         });
-
-        // Architectural background scenery emerges
-        tl.to(
-          architectureRef.current,
-          { opacity: 1, duration: 0.8, ease: "power2.inOut" },
-          0.05
-        );
 
         // Grand Islamic Arch Portal settles
         tl.to(
@@ -141,16 +122,11 @@ export default function InvitationCover({ onEnter }: InvitationCoverProps) {
           0.88
         );
 
-        // 0.95s — Enter Invitation Button & Scroll Indicator
-        tl.to(
-          buttonWrapRef.current,
-          { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
-          0.96
-        );
+        // 0.95s — Smooth Scroll Indicator
         tl.to(
           scrollIndicatorRef.current,
           { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" },
-          1.08
+          0.95
         );
       }, containerRef);
     }
@@ -159,128 +135,55 @@ export default function InvitationCover({ onEnter }: InvitationCoverProps) {
     return () => ctx?.revert();
   }, [prefersReducedMotion]);
 
-  // ── Coordinated Exit Transition into Bismillah Scene ──
-  const handleEnter = useCallback(async () => {
-    if (isExiting) return;
-    setIsExiting(true);
-
-    const { gsap } = await import("@/animations");
-
-    if (prefersReducedMotion) {
-      onEnter();
-      return;
+  // Smooth scroll handler to the next page / section
+  const handleScrollDown = useCallback(() => {
+    const next = document.getElementById("bismillah") || document.getElementById("story");
+    if (next) {
+      next.scrollIntoView({ behavior: "smooth" });
+    } else {
+      window.scrollTo({ top: window.innerHeight, behavior: "smooth" });
     }
-
-    const exitTl = gsap.timeline({ onComplete: onEnter });
-
-    // Centerpiece glows subtly before folding into the sanctuary
-    exitTl.to(logoWrapRef.current, {
-      scale: 1.04,
-      duration: 0.25,
-      ease: "power2.inOut",
-    });
-
-    exitTl.to(
-      [
-        scrollIndicatorRef.current,
-        buttonWrapRef.current,
-        dateBlockRef.current,
-        dividerRef.current,
-      ],
-      { opacity: 0, y: -10, duration: 0.35, stagger: 0.04, ease: "power2.in" },
-      0.1
-    );
-
-    exitTl.to(
-      [titleRef.current, subtitleRef.current],
-      { opacity: 0, y: -14, duration: 0.35, ease: "power2.in" },
-      0.18
-    );
-
-    exitTl.to(
-      logoWrapRef.current,
-      { scale: 0.94, opacity: 0, duration: 0.4, ease: "power2.in" },
-      0.26
-    );
-
-    exitTl.to(
-      [archPortalRef.current, architectureRef.current, containerRef.current],
-      { opacity: 0, duration: 0.45, ease: "power2.in" },
-      0.35
-    );
-  }, [isExiting, onEnter, prefersReducedMotion]);
-
-  // Keyboard shortcut — press Enter anywhere to enter
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (
-        e.key === "Enter" &&
-        !isExiting &&
-        isReady &&
-        document.activeElement?.tagName !== "BUTTON"
-      ) {
-        handleEnter();
-      }
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [handleEnter, isExiting, isReady]);
-
-  // Scroll down to enter smoothly (matching reference behaviour)
-  useEffect(() => {
-    if (!isReady || isExiting) return;
-
-    const handleWheel = (e: WheelEvent) => {
-      if (e.deltaY > 25) handleEnter();
-    };
-
-    let startY = 0;
-    const handleTouchStart = (e: TouchEvent) => {
-      startY = e.touches[0].clientY;
-    };
-    const handleTouchEnd = (e: TouchEvent) => {
-      if (startY - e.changedTouches[0].clientY > 35) {
-        handleEnter();
-      }
-    };
-
-    window.addEventListener("wheel", handleWheel, { passive: true });
-    window.addEventListener("touchstart", handleTouchStart, { passive: true });
-    window.addEventListener("touchend", handleTouchEnd, { passive: true });
-
-    return () => {
-      window.removeEventListener("wheel", handleWheel);
-      window.removeEventListener("touchstart", handleTouchStart);
-      window.removeEventListener("touchend", handleTouchEnd);
-    };
-  }, [handleEnter, isExiting, isReady]);
+    onEnter?.();
+  }, [onEnter]);
 
   return (
-    <div
+    <section
       ref={containerRef}
-      className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-emerald-deep"
-      role="main"
+      id="cover"
+      className="relative min-h-[100svh] w-full flex items-center justify-center overflow-hidden bg-emerald-deep py-12 sm:py-16"
+      role="banner"
       aria-label="Wedding Invitation Cover — Abuthahir and Fazila"
     >
+      {/* ── 0. Breathtaking Scenic Islamic Archway & Sunset Mosque Backdrop ── */}
+      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+        <Image
+          src="/hero-bg.webp"
+          alt="Grand Islamic Floral Archway at Sunset"
+          fill
+          priority
+          fetchPriority="high"
+          className="object-cover object-center scale-[1.01]"
+          sizes="100vw"
+          quality={88}
+          unoptimized
+        />
+        {/* Subtle royal ambient vignette blending into navbar & bottom */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(to bottom, rgba(2,39,31,0.6) 0%, rgba(2,39,31,0.1) 25%, rgba(2,39,31,0.15) 70%, #02271F 100%)",
+          }}
+        />
+      </div>
+
       {/* ── 1. Animated Golden Butterflies (Celestial Atmosphere) ── */}
       <GoldenButterflies />
 
-      {/* ── 2. Cinematic Mosque Silhouette Architecture ── */}
-      <CinematicArchitecture ref={architectureRef} />
-
-      {/* ── 3. Atmospheric Radial Glows ── */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(ellipse 75% 65% at 50% 45%, rgba(7,59,45,0.65) 0%, rgba(2,39,31,0.92) 80%)",
-        }}
-      />
-
-      {/* ── 4. Grand Islamic Arch Sanctuary Portal Frame ── */}
+      {/* ── 2. Grand Islamic Arch Sanctuary Portal Frame ── */}
       <div
         ref={archPortalRef}
-        className="relative z-10 w-full max-w-[440px] sm:max-w-[540px] md:max-w-[620px] mx-4 px-5 sm:px-10 py-6 sm:py-8 rounded-t-[100px] sm:rounded-t-[140px] md:rounded-t-[170px] rounded-b-sm border border-gold-antique/35 bg-[#02271F]/95 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.8)] flex flex-col items-center text-center"
+        className="relative z-10 w-full max-w-[440px] sm:max-w-[540px] md:max-w-[620px] mx-4 px-5 sm:px-10 py-6 sm:py-8 rounded-t-[100px] sm:rounded-t-[140px] md:rounded-t-[170px] rounded-b-sm border border-gold-antique/40 bg-[#02271F]/92 backdrop-blur-sm shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9)] flex flex-col items-center text-center"
       >
         {/* Inner dashed gold arch contour */}
         <div className="absolute inset-2 sm:inset-3 rounded-t-[92px] sm:rounded-t-[128px] md:rounded-t-[158px] rounded-b-sm border border-gold-antique/20 border-dashed pointer-events-none" />
@@ -299,12 +202,12 @@ export default function InvitationCover({ onEnter }: InvitationCoverProps) {
           <ArabesqueCorner position="bottom-right" className="text-gold-antique/50 w-5 h-5 sm:w-6 sm:h-6" />
         </div>
 
-        {/* Top Islamic Star Finial */}
-        <div className="mb-2 sm:mb-2.5 flex justify-center">
-          <IslamicStar size={18} className="text-gold-antique drop-shadow-[0_0_8px_#C6A15B]" />
+        {/* Top Centered Islamic Star Ornament */}
+        <div className="relative z-10 mb-2 sm:mb-3 flex justify-center">
+          <IslamicStar size={18} className="text-gold-antique/90 drop-shadow-[0_0_8px_#C6A15B]" />
         </div>
 
-        {/* ── 5. Centerpiece: User Supplied 3D Gold AF Monogram ── */}
+        {/* ── 5. AF Gold Monogram Emblem Centerpiece ── */}
         <div className="relative mb-2 sm:mb-3 flex justify-center items-center">
           {/* Radiant gold halo behind monogram */}
           <div
@@ -347,16 +250,16 @@ export default function InvitationCover({ onEnter }: InvitationCoverProps) {
           className="font-serif text-2xl sm:text-3xl md:text-4xl lg:text-[2.65rem] font-light text-ivory-warm tracking-[0.12em] uppercase leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.85)]"
         >
           Abuthahir{" "}
-          <span className="text-gold-antique font-normal italic font-serif lowercase text-xl sm:text-2xl md:text-3xl mx-0.5 sm:mx-1">
+          <span className="font-light text-gold-antique italic font-serif lowercase text-xl sm:text-2xl md:text-3xl mx-1">
             &amp;
           </span>{" "}
           Fazila
         </h1>
 
-        {/* ── 8. Ornamental Divider Line with Star Motif ── */}
+        {/* ── 8. Ornate Geometric Divider ── */}
         <div
           ref={dividerRef}
-          className="flex items-center gap-2.5 my-2 sm:my-3 w-full max-w-[200px]"
+          className="flex items-center gap-2.5 sm:gap-3 my-2 sm:my-2.5 w-32 sm:w-44"
         >
           <div
             className="h-[1px] flex-1"
@@ -381,7 +284,7 @@ export default function InvitationCover({ onEnter }: InvitationCoverProps) {
         </div>
 
         {/* ── 9. Dates and Venues: “21 — 23 MARCH 2027” & “KUMBAKONAM · TRICHY” ── */}
-        <div ref={dateBlockRef} className="flex flex-col items-center gap-1 mb-3.5 sm:mb-4">
+        <div ref={dateBlockRef} className="flex flex-col items-center gap-1 mb-3 sm:mb-3.5">
           <p className="font-sans text-[11px] sm:text-xs md:text-[13px] uppercase tracking-[0.42em] text-gold-antique font-medium drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]">
             21 — 23 March 2027
           </p>
@@ -390,42 +293,36 @@ export default function InvitationCover({ onEnter }: InvitationCoverProps) {
           </p>
         </div>
 
-        {/* ── 10. Elegant “ENTER INVITATION” Button ── */}
-        <div ref={buttonWrapRef} className="w-full flex justify-center">
-          <EnterInvitationButton
-            onClick={handleEnter}
-            disabled={isExiting}
-          />
-        </div>
-
-        {/* ── 11. Subtle Scroll Indicator (Matching Reference Experience) ── */}
-        <div
+        {/* ── 10. Smooth Scroll Indicator to Next Page / Section ── */}
+        <button
           ref={scrollIndicatorRef}
-          onClick={handleEnter}
-          className="flex flex-col items-center gap-1 mt-2 sm:mt-2.5 cursor-pointer group opacity-65 hover:opacity-100 transition-opacity"
-          aria-label="Scroll to unfold our celebration"
+          onClick={handleScrollDown}
+          className="flex flex-col items-center gap-1.5 mt-2 sm:mt-2.5 cursor-pointer group opacity-90 hover:opacity-100 transition-all duration-300 focus:outline-none"
+          aria-label="Scroll to explore our wedding celebration"
         >
-          <span className="font-sans text-[7.5px] sm:text-[8.5px] uppercase tracking-[0.3em] text-gold-antique/80">
-            Scroll to unfold
+          <span className="font-sans text-[8px] sm:text-[9px] uppercase tracking-[0.35em] text-gold-antique/90 font-medium group-hover:text-gold-light transition-colors">
+            Scroll to Explore
           </span>
-          <svg
-            width="9"
-            height="5"
-            viewBox="0 0 10 6"
-            fill="none"
-            className="text-gold-antique animate-bounce"
-            aria-hidden="true"
-          >
-            <path
-              d="M1 1 L5 5 L9 1"
-              stroke="currentColor"
-              strokeWidth="1.2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </div>
+          <div className="w-6 h-6 rounded-full border border-gold-antique/40 flex items-center justify-center group-hover:border-gold-antique transition-colors">
+            <svg
+              width="10"
+              height="6"
+              viewBox="0 0 10 6"
+              fill="none"
+              className="text-gold-antique animate-bounce"
+              aria-hidden="true"
+            >
+              <path
+                d="M1 1 L5 5 L9 1"
+                stroke="currentColor"
+                strokeWidth="1.3"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </div>
+        </button>
       </div>
-    </div>
+    </section>
   );
 }

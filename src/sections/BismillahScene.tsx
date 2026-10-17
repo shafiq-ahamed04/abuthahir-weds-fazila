@@ -132,59 +132,20 @@ export default function BismillahScene({ isVisible, onScrollToMain }: BismillahS
     return () => ctx?.revert();
   }, [isVisible]);
 
-  // Wheel, touch, and keyboard navigation to smoothly transition into the main celebration
-  useEffect(() => {
-    if (!isVisible) return;
-
-    let hasScrolled = false;
-    let touchStartY = 0;
-
-    const triggerTransition = () => {
-      if (hasScrolled) return;
-      hasScrolled = true;
+  const handleScrollToStory = () => {
+    const story = document.getElementById("story");
+    if (story) {
+      story.scrollIntoView({ behavior: "smooth" });
+    } else {
       onScrollToMain?.();
-    };
-
-    const handleWheel = (e: WheelEvent) => {
-      if (e.deltaY > 20) {
-        triggerTransition();
-      }
-    };
-
-    const handleTouchStart = (e: TouchEvent) => {
-      touchStartY = e.touches[0].clientY;
-    };
-
-    const handleTouchMove = (e: TouchEvent) => {
-      const touchY = e.touches[0].clientY;
-      if (touchStartY - touchY > 35) {
-        triggerTransition();
-      }
-    };
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (["ArrowDown", "PageDown", "Space", "Enter"].includes(e.code)) {
-        triggerTransition();
-      }
-    };
-
-    window.addEventListener("wheel", handleWheel, { passive: true });
-    window.addEventListener("touchstart", handleTouchStart, { passive: true });
-    window.addEventListener("touchmove", handleTouchMove, { passive: true });
-    window.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      window.removeEventListener("wheel", handleWheel);
-      window.removeEventListener("touchstart", handleTouchStart);
-      window.removeEventListener("touchmove", handleTouchMove);
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [isVisible, onScrollToMain]);
+    }
+  };
 
   return (
-    <div
+    <section
       ref={containerRef}
-      className="fixed inset-0 z-40 w-full h-full min-h-[100svh] overflow-hidden flex flex-col items-center justify-center bg-emerald-deep text-ivory-warm select-none"
+      id="bismillah"
+      className="relative w-full min-h-[100svh] overflow-hidden flex flex-col items-center justify-center bg-emerald-deep text-ivory-warm select-none py-16 sm:py-24"
       role="region"
       aria-label="Bismillah — Opening Blessing"
     >
@@ -343,7 +304,7 @@ export default function BismillahScene({ isVisible, onScrollToMain }: BismillahS
       {/* ── 5. Minimal, Elegant Scroll Indicator ── */}
       <button
         ref={scrollIndicatorRef}
-        onClick={onScrollToMain}
+        onClick={handleScrollToStory}
         className="absolute bottom-8 sm:bottom-10 z-30 flex flex-col items-center gap-2 cursor-pointer group focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gold-antique rounded-sm transition-opacity duration-300 opacity-75 hover:opacity-100"
         aria-label="Scroll to enter the wedding journey"
       >
@@ -378,6 +339,6 @@ export default function BismillahScene({ isVisible, onScrollToMain }: BismillahS
           </svg>
         </div>
       </button>
-    </div>
+    </section>
   );
 }

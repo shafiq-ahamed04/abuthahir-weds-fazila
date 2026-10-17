@@ -122,17 +122,20 @@ export default function CinematicPhotoPortal({
           0.35
         );
 
-        // Continuous scrubbed optical parallax on the inner photo
-        gsap.to(imageWrapRef.current, {
-          y: -24,
-          ease: "none",
-          scrollTrigger: {
-            trigger: containerRef.current,
-            start: "top bottom",
-            end: "bottom top",
-            scrub: 1.2,
-          },
-        });
+        // Continuous scrubbed optical parallax on the inner photo (Desktop only)
+        const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+        if (!isMobile) {
+          gsap.to(imageWrapRef.current, {
+            y: -24,
+            ease: "none",
+            scrollTrigger: {
+              trigger: containerRef.current,
+              start: "top bottom",
+              end: "bottom top",
+              scrub: 1.2,
+            },
+          });
+        }
       }, containerRef);
     }
 
@@ -147,17 +150,17 @@ export default function CinematicPhotoPortal({
     >
       {/* ── Outer Golden Ambient Glow ── */}
       <div
-        className="absolute -inset-4 sm:-inset-6 pointer-events-none rounded-t-[110px] sm:rounded-t-[150px] opacity-40 blur-2xl"
+        className="absolute -inset-4 sm:-inset-6 pointer-events-none rounded-t-[110px] sm:rounded-t-[150px] opacity-40"
         style={{
           background:
-            "radial-gradient(ellipse at 50% 40%, rgba(198,161,91,0.3) 0%, rgba(7,59,45,0.2) 60%, transparent 80%)",
+            "radial-gradient(ellipse at 50% 40%, rgba(198,161,91,0.25) 0%, rgba(7,59,45,0.15) 50%, transparent 75%)",
         }}
       />
 
       {/* ── Imperial Pointed Arch Sanctuary Portal with Gold Foil Shimmer ── */}
       <div
         ref={portalRef}
-        className="relative overflow-hidden rounded-t-[90px] sm:rounded-t-[130px] md:rounded-t-[150px] rounded-b-sm border border-gold-antique/40 backdrop-blur-md bg-emerald-deep shadow-[0_25px_60px_-15px_rgba(0,0,0,0.8)] group gold-foil-shimmer"
+        className="relative overflow-hidden rounded-t-[90px] sm:rounded-t-[130px] md:rounded-t-[150px] rounded-b-sm border border-gold-antique/40 bg-[#02271F] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.8)] group gold-foil-shimmer"
         style={{ aspectRatio }}
       >
         {/* Inner dashed gold arch contour */}

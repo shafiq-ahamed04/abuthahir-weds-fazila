@@ -29,7 +29,7 @@ function IslamicSkylineDividerComponent({
       <div className="relative mx-3 sm:mx-6 flex items-center justify-center">
         {/* Soft Radial Ambient Glow */}
         <div
-          className="absolute -inset-4 rounded-full opacity-40 blur-md pointer-events-none"
+          className="absolute -inset-4 rounded-full opacity-40 pointer-events-none"
           style={{
             background:
               "radial-gradient(circle, rgba(198,161,91,0.5) 0%, transparent 70%)",

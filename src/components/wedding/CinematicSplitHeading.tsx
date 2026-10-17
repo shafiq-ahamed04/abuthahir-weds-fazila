@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, memo } from "react";
 
 interface CinematicSplitHeadingProps {
   title: string;
@@ -10,7 +10,7 @@ interface CinematicSplitHeadingProps {
   className?: string;
 }
 
-export default function CinematicSplitHeading({
+function CinematicSplitHeading({
   title,
   eyebrow,
   subtitle,
@@ -48,6 +48,7 @@ export default function CinematicSplitHeading({
             trigger: containerRef.current,
             start: "top 85%",
             toggleActions: "play none none none",
+            once: true,
           },
         });
 
@@ -114,7 +115,7 @@ export default function CinematicSplitHeading({
       {eyebrow && (
         <p
           ref={eyebrowRef}
-          className="font-sans text-[10px] sm:text-[11px] uppercase tracking-[0.45em] text-gold-antique mb-2.5 font-semibold will-change-transform"
+          className="font-sans text-[10px] sm:text-[11px] uppercase tracking-[0.45em] text-gold-antique mb-2.5 font-semibold"
         >
           {eyebrow}
         </p>
@@ -130,7 +131,7 @@ export default function CinematicSplitHeading({
               ref={(el) => {
                 if (el) wordsRef.current[i] = el;
               }}
-              className="inline-block transform-gpu will-change-transform"
+              className="inline-block transform-gpu"
             >
               {word}
             </span>
@@ -149,3 +150,5 @@ export default function CinematicSplitHeading({
     </div>
   );
 }
+
+export default memo(CinematicSplitHeading);

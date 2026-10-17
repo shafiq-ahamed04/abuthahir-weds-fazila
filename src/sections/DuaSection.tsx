@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, memo } from "react";
 import Image from "next/image";
 import { weddingData } from "@/data/wedding";
 import { IslamicStar, ArabesqueCorner } from "@/components/elements/IslamicElements";
 import GoldenStarlightPetals from "@/components/wedding/GoldenStarlightPetals";
 import { GOLD_VENUE_BLUR_DATA_URL } from "@/lib/image-placeholders";
 
-export default function DuaSection() {
+function DuaSection() {
   const { verses, couple } = weddingData;
   const sectionRef = useRef<HTMLElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -40,21 +40,25 @@ export default function DuaSection() {
             scrollTrigger: {
               trigger: sectionRef.current,
               start: "top 80%",
+              once: true,
             },
           }
         );
 
-        // Subtle architectural parallax
-        gsap.to(contentRef.current, {
-          y: -24,
-          ease: "none",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top bottom",
-            end: "bottom top",
-            scrub: 1.5,
-          },
-        });
+        // Subtle architectural parallax (Desktop only)
+        const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+        if (!isMobile) {
+          gsap.to(contentRef.current, {
+            y: -24,
+            ease: "none",
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top bottom",
+              end: "bottom top",
+              scrub: 1.5,
+            },
+          });
+        }
       }, sectionRef);
     }
 
@@ -181,3 +185,5 @@ export default function DuaSection() {
     </section>
   );
 }
+
+export default memo(DuaSection);

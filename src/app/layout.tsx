@@ -6,21 +6,21 @@ import "./globals.css";
 const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["300", "400", "500"],
   display: "swap",
 });
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   variable: "--font-jakarta",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["300", "400", "500", "600"],
   display: "swap",
 });
 
 const amiri = Amiri({
   variable: "--font-amiri",
   subsets: ["arabic"],
-  weight: ["400", "700"],
+  weight: ["400"],
   display: "swap",
 });
 
@@ -31,7 +31,13 @@ export const viewport: Viewport = {
   maximumScale: 5,
 };
 
+const deployedUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  process.env.VITE_SITE_URL ||
+  siteConfig.url;
+
 export const metadata: Metadata = {
+  metadataBase: new URL(deployedUrl),
   title: {
     default: siteConfig.name,
     template: `%s | ${siteConfig.shortName}`,
@@ -42,14 +48,40 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: siteConfig.locale,
-    url: siteConfig.url,
+    url: deployedUrl,
     title: siteConfig.name,
     description: siteConfig.description,
     siteName: siteConfig.name,
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Abuthahir & Fazila Wedding Invitation",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteConfig.name,
+    description: siteConfig.description,
+    images: ["/og-image.jpg"],
   },
   robots: {
-    index: true,
-    follow: true,
+    index: false,
+    follow: false,
+    nocache: true,
+    googleBot: {
+      index: false,
+      follow: false,
+      noimageindex: true,
+      "max-video-preview": -1,
+      "max-image-preview": "none",
+      "max-snippet": -1,
+    },
+  },
+  other: {
+    robots: "noindex, nofollow, noarchive, nosnippet, noimageindex",
   },
 };
 
@@ -63,6 +95,20 @@ export default function RootLayout({
       lang="en"
       className={`${cormorant.variable} ${plusJakartaSans.variable} ${amiri.variable} antialiased`}
     >
+      <head>
+        <meta
+          name="robots"
+          content="noindex, nofollow, noarchive, nosnippet, noimageindex"
+        />
+        {/* Single LCP Hero Image Preload */}
+        <link
+          rel="preload"
+          as="image"
+          href="/af-gold-monogram.png"
+          type="image/png"
+          fetchPriority="high"
+        />
+      </head>
       <body className="min-h-screen flex flex-col bg-emerald-deep text-ivory-warm islamic-bg-pattern selection:bg-gold-antique selection:text-emerald-deep">
         {children}
       </body>

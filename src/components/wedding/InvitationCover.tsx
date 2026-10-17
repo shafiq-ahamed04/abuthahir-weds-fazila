@@ -64,16 +64,16 @@ export default function InvitationCover({ onEnter }: InvitationCoverProps) {
           return;
         }
 
-        // Initial hidden states
+        // Initial states: keep arch portal and monogram visible for instant LCP paint
         gsap.set(architectureRef.current, { opacity: 0 });
-        gsap.set(archPortalRef.current, { opacity: 0, scale: 0.96, y: 16 });
-        gsap.set(logoHaloRef.current, { opacity: 0, scale: 0.8 });
-        gsap.set(logoWrapRef.current, { opacity: 0, scale: 0.88, y: 14 });
-        gsap.set(subtitleRef.current, { opacity: 0, y: 12 });
-        gsap.set(titleRef.current, { opacity: 0, y: 16 });
+        gsap.set(archPortalRef.current, { opacity: 1, scale: 0.98, y: 8 });
+        gsap.set(logoHaloRef.current, { opacity: 0.4, scale: 0.85 });
+        gsap.set(logoWrapRef.current, { opacity: 1, scale: 0.94, y: 6 });
+        gsap.set(subtitleRef.current, { opacity: 0, y: 10 });
+        gsap.set(titleRef.current, { opacity: 0, y: 14 });
         gsap.set(dividerRef.current, { opacity: 0, scaleX: 0 });
-        gsap.set(dateBlockRef.current, { opacity: 0, y: 12 });
-        gsap.set(buttonWrapRef.current, { opacity: 0, y: 14 });
+        gsap.set(dateBlockRef.current, { opacity: 0, y: 10 });
+        gsap.set(buttonWrapRef.current, { opacity: 0, y: 12 });
         gsap.set(scrollIndicatorRef.current, { opacity: 0, y: 8 });
 
         const tl = gsap.timeline({
@@ -81,42 +81,40 @@ export default function InvitationCover({ onEnter }: InvitationCoverProps) {
           onComplete: () => setIsReady(true),
         });
 
-        // 0.1s — Architectural background scenery emerges
+        // Architectural background scenery emerges
         tl.to(
           architectureRef.current,
-          { opacity: 1, duration: 0.9, ease: "power2.inOut" },
-          0.1
+          { opacity: 1, duration: 0.8, ease: "power2.inOut" },
+          0.05
         );
 
-        // 0.25s — Grand Islamic Arch Portal reveals
+        // Grand Islamic Arch Portal settles
         tl.to(
           archPortalRef.current,
           {
-            opacity: 1,
             scale: 1,
             y: 0,
-            duration: 0.85,
+            duration: 0.65,
             ease: "power3.out",
           },
-          0.25
+          0.05
         );
 
-        // 0.4s — Golden halo & AF Monogram centerpiece entrance
+        // Golden halo & AF Monogram centerpiece settles
         tl.to(
           logoHaloRef.current,
-          { opacity: 1, scale: 1, duration: 1.0, ease: "power2.out" },
-          0.4
+          { opacity: 1, scale: 1, duration: 0.7, ease: "power2.out" },
+          0.1
         );
         tl.to(
           logoWrapRef.current,
           {
-            opacity: 1,
             scale: 1,
             y: 0,
-            duration: 0.95,
+            duration: 0.65,
             ease: "power3.out",
           },
-          0.42
+          0.1
         );
 
         // 0.6s — Family Subtitle & Grand Names
@@ -282,7 +280,7 @@ export default function InvitationCover({ onEnter }: InvitationCoverProps) {
       {/* ── 4. Grand Islamic Arch Sanctuary Portal Frame ── */}
       <div
         ref={archPortalRef}
-        className="relative z-10 w-full max-w-[440px] sm:max-w-[540px] md:max-w-[620px] mx-4 px-5 sm:px-10 py-6 sm:py-8 rounded-t-[100px] sm:rounded-t-[140px] md:rounded-t-[170px] rounded-b-sm border border-gold-antique/35 backdrop-blur-md bg-emerald-deep/60 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.8)] flex flex-col items-center text-center"
+        className="relative z-10 w-full max-w-[440px] sm:max-w-[540px] md:max-w-[620px] mx-4 px-5 sm:px-10 py-6 sm:py-8 rounded-t-[100px] sm:rounded-t-[140px] md:rounded-t-[170px] rounded-b-sm border border-gold-antique/35 bg-[#02271F]/95 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.8)] flex flex-col items-center text-center"
       >
         {/* Inner dashed gold arch contour */}
         <div className="absolute inset-2 sm:inset-3 rounded-t-[92px] sm:rounded-t-[128px] md:rounded-t-[158px] rounded-b-sm border border-gold-antique/20 border-dashed pointer-events-none" />
@@ -329,6 +327,8 @@ export default function InvitationCover({ onEnter }: InvitationCoverProps) {
               height={341}
               className="w-36 sm:w-48 md:w-56 lg:w-60 h-auto object-contain drop-shadow-[0_12px_28px_rgba(198,161,91,0.4)]"
               priority
+              fetchPriority="high"
+              unoptimized
             />
           </div>
         </div>

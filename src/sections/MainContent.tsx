@@ -60,6 +60,7 @@ export default function MainContent() {
           style={{
             backgroundImage:
               "repeating-linear-gradient(45deg, rgba(198,161,91,0.02) 0px, rgba(198,161,91,0.02) 1px, transparent 1px, transparent 20px), repeating-linear-gradient(-45deg, rgba(198,161,91,0.02) 0px, rgba(198,161,91,0.02) 1px, transparent 1px, transparent 20px)",
+            transform: "translateZ(0)",
           }}
         />
 

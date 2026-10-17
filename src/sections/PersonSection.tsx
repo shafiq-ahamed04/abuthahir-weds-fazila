@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, memo } from "react";
 import { weddingData } from "@/data/wedding";
 import CinematicPhotoPortal from "@/components/wedding/CinematicPhotoPortal";
 import CinematicSplitHeading from "@/components/wedding/CinematicSplitHeading";
@@ -9,7 +9,7 @@ interface PersonSectionProps {
   role: "groom" | "bride";
 }
 
-export default function PersonSection({ role }: PersonSectionProps) {
+function PersonSection({ role }: PersonSectionProps) {
   const isGroom = role === "groom";
   const person = isGroom ? weddingData.couple.groom : weddingData.couple.bride;
 
@@ -48,6 +48,7 @@ export default function PersonSection({ role }: PersonSectionProps) {
             scrollTrigger: {
               trigger: sectionRef.current,
               start: "top 80%",
+              once: true,
             },
           }
         );
@@ -157,3 +158,5 @@ export default function PersonSection({ role }: PersonSectionProps) {
     </section>
   );
 }
+
+export default memo(PersonSection);

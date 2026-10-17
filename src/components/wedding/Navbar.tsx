@@ -13,10 +13,18 @@ export default function Navbar({ onNavigateHome }: NavbarProps) {
   const [isPlaying, setIsPlaying] = useState(false);
 
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const scrolled = window.scrollY > 50;
+          setIsScrolled((prev) => (prev !== scrolled ? scrolled : prev));
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -50,7 +58,7 @@ export default function Navbar({ onNavigateHome }: NavbarProps) {
     <nav
       className={`fixed top-0 inset-x-0 z-40 transition-all duration-300 ${
         isScrolled
-          ? "bg-[#02271F]/90 backdrop-blur-md border-b border-gold-antique/25 shadow-[0_4px_30px_rgba(0,0,0,0.5)] py-3"
+          ? "bg-[#02271F]/98 border-b border-gold-antique/25 shadow-[0_4px_30px_rgba(0,0,0,0.5)] py-3"
           : "bg-transparent py-5"
       }`}
       aria-label="Main Navigation"

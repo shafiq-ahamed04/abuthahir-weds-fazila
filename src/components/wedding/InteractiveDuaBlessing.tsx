@@ -127,7 +127,7 @@ export default function InteractiveDuaBlessing({
             const rect = e.currentTarget.getBoundingClientRect();
             triggerBlessing(rect.left + rect.width / 2, rect.top - 20);
           }}
-          className="group relative inline-flex items-center justify-between gap-2 sm:gap-2.5 px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-full border border-gold-antique/40 bg-emerald-deep/90 hover:bg-emerald-primary/60 backdrop-blur-md transition-all duration-300 hover:border-gold-antique hover:scale-[1.02] shadow-[0_4px_20px_rgba(0,0,0,0.35)] active:scale-95 cursor-pointer text-left max-w-full"
+          className="group relative inline-flex items-center justify-between gap-2 sm:gap-2.5 px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-full border border-gold-antique/40 bg-[#02271F]/95 hover:bg-emerald-primary/80 transition-all duration-300 hover:border-gold-antique hover:scale-[1.02] shadow-[0_4px_20px_rgba(0,0,0,0.35)] active:scale-95 cursor-pointer text-left max-w-full"
           aria-label="Tap to send a Dua for the couple"
         >
           <div className="flex items-center gap-2 min-w-0">
@@ -175,7 +175,7 @@ export default function InteractiveDuaBlessing({
               animation: "floatingDuaRise 2.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards",
             }}
           >
-            <div className="flex items-center gap-1.5 px-3 sm:px-4 py-1.5 rounded-full bg-[#02271F]/95 border border-gold-antique/70 shadow-[0_4px_25px_rgba(198,161,91,0.45)] backdrop-blur-md whitespace-nowrap">
+            <div className="flex items-center gap-1.5 px-3 sm:px-4 py-1.5 rounded-full bg-[#02271F]/98 border border-gold-antique/70 shadow-[0_4px_25px_rgba(198,161,91,0.45)] whitespace-nowrap">
               <span className="text-gold-antique text-[10px] sm:text-xs">✨</span>
               <span
                 lang="ar"

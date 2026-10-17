@@ -4,10 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import dynamic from "next/dynamic";
 
 // Dynamic imports — prevents SSR issues with GSAP and browser APIs
-const InvitationCover = dynamic(
-  () => import("@/components/wedding/InvitationCover"),
-  { ssr: false }
-);
+import InvitationCover from "@/components/wedding/InvitationCover";
 
 const BismillahScene = dynamic(
   () => import("@/sections/BismillahScene"),

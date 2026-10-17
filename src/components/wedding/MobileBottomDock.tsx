@@ -62,6 +62,31 @@ export default function MobileBottomDock() {
   const [activeId, setActiveId] = useState<string>("story");
   const lastScrollYRef = useRef(0);
 
+  // Use IntersectionObserver to track active section with ZERO layout thrashing
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setActiveId(entry.target.id);
+          }
+        }
+      },
+      {
+        rootMargin: "-20% 0px -60% 0px",
+        threshold: 0,
+      }
+    );
+
+    NAV_ITEMS.forEach((item) => {
+      const el = document.getElementById(item.id);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  // Simple scroll direction detection without querying DOM
   useEffect(() => {
     let ticking = false;
 
@@ -71,28 +96,13 @@ export default function MobileBottomDock() {
           const currentY = window.scrollY;
           const diff = currentY - lastScrollYRef.current;
 
-          // Hide on fast scroll down, reveal on scroll up
-          if (diff > 12 && currentY > 200) {
+          if (diff > 15 && currentY > 200) {
             setIsVisible(false);
-          } else if (diff < -8 || currentY <= 150) {
+          } else if (diff < -10 || currentY <= 150) {
             setIsVisible(true);
           }
 
           lastScrollYRef.current = currentY;
-
-          // Determine current section in view
-          const sections = NAV_ITEMS.map((item) => document.getElementById(item.id)).filter(
-            Boolean
-          ) as HTMLElement[];
-
-          const scrollMiddle = currentY + window.innerHeight / 3;
-          for (let i = sections.length - 1; i >= 0; i--) {
-            if (sections[i].offsetTop <= scrollMiddle) {
-              setActiveId(sections[i].id);
-              break;
-            }
-          }
-
           ticking = false;
         });
         ticking = true;
@@ -106,16 +116,7 @@ export default function MobileBottomDock() {
   const handleNavClick = (id: string) => {
     const el = document.getElementById(id);
     if (!el) return;
-    const offset = 70;
-    const bodyRect = document.body.getBoundingClientRect().top;
-    const elementRect = el.getBoundingClientRect().top;
-    const elementPosition = elementRect - bodyRect;
-    const offsetPosition = elementPosition - offset;
-
-    window.scrollTo({
-      top: offsetPosition,
-      behavior: "smooth",
-    });
+    el.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   return (
@@ -126,7 +127,7 @@ export default function MobileBottomDock() {
       style={{ bottom: "max(16px, env(safe-area-inset-bottom, 16px))" }}
       aria-label="Quick Mobile Navigation Dock"
     >
-      <nav className="flex items-center gap-1 sm:gap-2 px-3 py-1.5 rounded-full border border-gold-antique/30 bg-[#02271f]/85 backdrop-blur-md shadow-[0_10px_30px_rgba(0,0,0,0.6)]">
+      <nav className="flex items-center gap-1 sm:gap-2 px-3 py-1.5 rounded-full border border-gold-antique/30 bg-[#02271f]/98 shadow-[0_10px_30px_rgba(0,0,0,0.6)]">
         {NAV_ITEMS.map((item) => {
           const isActive = activeId === item.id;
           return (

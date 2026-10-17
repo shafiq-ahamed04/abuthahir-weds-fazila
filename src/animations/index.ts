@@ -9,8 +9,15 @@ let isScrollTriggerRegistered = false;
 export function registerGSAP() {
   if (typeof window !== "undefined" && !isScrollTriggerRegistered) {
     gsap.registerPlugin(ScrollTrigger);
+    ScrollTrigger.config({ ignoreMobileResize: true });
     isScrollTriggerRegistered = true;
   }
+}
+
+if (typeof window !== "undefined" && !isScrollTriggerRegistered) {
+  gsap.registerPlugin(ScrollTrigger);
+  ScrollTrigger.config({ ignoreMobileResize: true });
+  isScrollTriggerRegistered = true;
 }
 
 /**

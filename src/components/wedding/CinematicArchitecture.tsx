@@ -60,21 +60,11 @@ const CinematicArchitecture = forwardRef<HTMLDivElement, CinematicArchitecturePr
               <stop offset="70%" stopColor="#C6A15B" stopOpacity="0.6" />
               <stop offset="100%" stopColor="#C6A15B" stopOpacity="0" />
             </linearGradient>
-            <filter id="silhouetteBlur">
-              <feGaussianBlur stdDeviation="1" />
-            </filter>
-            <filter id="lanternGlow">
-              <feGaussianBlur stdDeviation="8" result="glow" />
-              <feMerge>
-                <feMergeNode in="glow" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
           </defs>
 
           {/* ── Far background: distant minaret skyline (layer 1 — most distant) ── */}
           {/* Left distant minarets */}
-          <g opacity="0.25" filter="url(#silhouetteBlur)">
+          <g opacity="0.22">
             {/* Far left slender minaret */}
             <rect x="80" y="300" width="18" height="580" fill="#073B2D" />
             <path d="M71 300 Q89 260 107 300 Z" fill="#073B2D" />
@@ -180,7 +170,7 @@ const CinematicArchitecture = forwardRef<HTMLDivElement, CinematicArchitecturePr
           </g>
 
           {/* ── Hanging ornamental lanterns ── */}
-          <g filter="url(#lanternGlow)">
+          <g>
             {/* Left lantern */}
             <line x1="380" y1="0" x2="380" y2="90" stroke="#C6A15B" strokeWidth="1" opacity="0.4" />
             <path d="M366 90 Q380 80 394 90 L398 140 Q380 155 362 140 Z" fill="none" stroke="#C6A15B" strokeWidth="0.8" opacity="0.5" />

@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, memo } from "react";
 import { weddingData } from "@/data/wedding";
 import CinematicPhotoPortal from "@/components/wedding/CinematicPhotoPortal";
 import CinematicSplitHeading from "@/components/wedding/CinematicSplitHeading";
 
-export default function StoryIntroSection() {
+function StoryIntroSection() {
   const { story } = weddingData;
   const sectionRef = useRef<HTMLElement>(null);
   const textColRef = useRef<HTMLDivElement>(null);
@@ -42,6 +42,7 @@ export default function StoryIntroSection() {
             scrollTrigger: {
               trigger: sectionRef.current,
               start: "top 80%",
+              once: true,
             },
           }
         );
@@ -151,3 +152,5 @@ export default function StoryIntroSection() {
     </section>
   );
 }
+
+export default memo(StoryIntroSection);

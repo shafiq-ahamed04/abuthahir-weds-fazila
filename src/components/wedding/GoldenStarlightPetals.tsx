@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback, memo } from "react";
 
 interface Particle {
   x: number;
@@ -16,7 +16,7 @@ interface Particle {
   color: string;
 }
 
-export default function GoldenStarlightPetals({
+function GoldenStarlightPetals({
   containerRef,
 }: {
   containerRef?: React.RefObject<HTMLElement | null>;
@@ -27,16 +27,17 @@ export default function GoldenStarlightPetals({
   const isRunningRef = useRef(false);
 
   // Resize canvas with high-DPI retina support
+  // Resize canvas with capped DPR (1.5 max as required)
   const resizeCanvas = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const dpr = typeof window !== "undefined" ? Math.min(window.devicePixelRatio || 1, 2) : 1;
+    const dpr = typeof window !== "undefined" ? Math.min(window.devicePixelRatio || 1, 1.5) : 1;
     const width = window.innerWidth;
     const height = window.innerHeight;
 
-    canvas.width = width * dpr;
-    canvas.height = height * dpr;
+    canvas.width = Math.floor(width * dpr);
+    canvas.height = Math.floor(height * dpr);
     canvas.style.width = `${width}px`;
     canvas.style.height = `${height}px`;
 
@@ -46,7 +47,8 @@ export default function GoldenStarlightPetals({
     }
   }, []);
 
-  // Animation Loop — automatically starts on particle creation and sleeps when empty
+  // Animation Loop — single RAF loop, pauses when hidden, skips heavy frames
+  const lastFrameTimeRef = useRef(0);
   const startLoop = useCallback(() => {
     if (isRunningRef.current) return;
     isRunningRef.current = true;
@@ -56,7 +58,18 @@ export default function GoldenStarlightPetals({
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const render = () => {
+    const render = (now: number) => {
+      // Pause if document hidden
+      if (typeof document !== "undefined" && document.hidden) {
+        isRunningRef.current = false;
+        animFrameRef.current = null;
+        return;
+      }
+
+      // Frame pacing: skip processing if frame time delta was too long
+      const frameDelta = now - lastFrameTimeRef.current;
+      lastFrameTimeRef.current = now;
+
       const width = window.innerWidth;
       const height = window.innerHeight;
 
@@ -106,7 +119,7 @@ export default function GoldenStarlightPetals({
           // Shimmering starlight mote
           ctx.beginPath();
           ctx.arc(0, 0, p.size * 0.4, 0, Math.PI * 2);
-          ctx.shadowBlur = 6;
+          ctx.shadowBlur = 4;
           ctx.shadowColor = p.color;
           ctx.fill();
         }
@@ -129,7 +142,8 @@ export default function GoldenStarlightPetals({
   const spawnBurst = useCallback(
     (clientX?: number, clientY?: number) => {
       const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
-      const count = isMobile ? 24 : 40;
+      // Cut count by half on mobile (<768px)
+      const count = isMobile ? 12 : 24;
       const colors = ["#C6A15B", "#F5EBD5", "#E8D3A2", "#DFC082", "#A98A50"];
       const types: ("star" | "petal" | "dust")[] = ["star", "petal", "dust"];
 
@@ -138,15 +152,15 @@ export default function GoldenStarlightPetals({
 
       for (let i = 0; i < count; i++) {
         const angle = Math.random() * Math.PI * 2;
-        const speed = Math.random() * (isMobile ? 2.8 : 3.8) + 1.2;
+        const speed = Math.random() * (isMobile ? 2.4 : 3.4) + 1.2;
         particlesRef.current.push({
-          x: originX + (Math.random() - 0.5) * 24,
-          y: originY + (Math.random() - 0.5) * 24,
+          x: originX + (Math.random() - 0.5) * 20,
+          y: originY + (Math.random() - 0.5) * 20,
           vx: Math.cos(angle) * speed + (Math.random() - 0.5) * 0.5,
-          vy: Math.sin(angle) * speed - (isMobile ? 2.0 : 2.6), // upward burst
-          size: Math.random() * (isMobile ? 4.5 : 6) + 2.5,
+          vy: Math.sin(angle) * speed - (isMobile ? 1.8 : 2.4),
+          size: Math.random() * (isMobile ? 4 : 5.5) + 2.2,
           alpha: 1,
-          decay: Math.random() * 0.018 + 0.009,
+          decay: Math.random() * 0.02 + 0.012,
           rotation: Math.random() * Math.PI * 2,
           vRot: (Math.random() - 0.5) * 0.09,
           type: types[Math.floor(Math.random() * types.length)],
@@ -159,15 +173,22 @@ export default function GoldenStarlightPetals({
     [startLoop]
   );
 
-  // Set up resize listener
+  // Set up resize and visibility listeners
   useEffect(() => {
     resizeCanvas();
-    window.addEventListener("resize", resizeCanvas);
+    const handleVisChange = () => {
+      if (!document.hidden && particlesRef.current.length > 0) {
+        startLoop();
+      }
+    };
+    window.addEventListener("resize", resizeCanvas, { passive: true });
+    document.addEventListener("visibilitychange", handleVisChange);
     return () => {
       window.removeEventListener("resize", resizeCanvas);
+      document.removeEventListener("visibilitychange", handleVisChange);
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
     };
-  }, [resizeCanvas]);
+  }, [resizeCanvas, startLoop]);
 
   // Listen to tap anywhere in the parent section
   useEffect(() => {
@@ -218,7 +239,7 @@ export default function GoldenStarlightPetals({
             const rect = e.currentTarget.getBoundingClientRect();
             spawnBurst(rect.left + rect.width / 2, rect.top + rect.height / 2);
           }}
-          className="group relative inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-2 sm:py-2.5 rounded-full border border-gold-antique/35 bg-emerald-deep/90 hover:bg-emerald-primary/70 backdrop-blur-md transition-all duration-300 hover:border-gold-antique hover:scale-105 active:scale-95 text-center shadow-[0_4px_20px_rgba(0,0,0,0.4)] cursor-pointer max-w-full"
+          className="group relative inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-2 sm:py-2.5 rounded-full border border-gold-antique/35 bg-[#02271F]/95 hover:bg-emerald-primary/70 transition-all duration-300 hover:border-gold-antique hover:scale-105 active:scale-95 text-center shadow-[0_4px_20px_rgba(0,0,0,0.4)] cursor-pointer max-w-full"
           aria-label="Tap to scatter golden blessings and starlight"
         >
           <span className="text-gold-antique text-xs group-hover:rotate-45 transition-transform duration-300 shrink-0">
@@ -235,3 +256,5 @@ export default function GoldenStarlightPetals({
     </>
   );
 }
+
+export default memo(GoldenStarlightPetals);

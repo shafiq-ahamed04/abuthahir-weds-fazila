@@ -11,27 +11,35 @@ export default function SmoothScrollProvider({
   const lenisRef = useRef<Lenis | null>(null);
 
   useEffect(() => {
-    // Check reduced motion preference
+    // 1. Reduced motion check
     const prefersReducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
     ).matches;
-
     if (prefersReducedMotion) return;
 
+    // 2. Touch device check — NEVER hijack touch scrolling on mobile
+    const isTouchDevice =
+      "ontouchstart" in window ||
+      navigator.maxTouchPoints > 0 ||
+      window.matchMedia("(pointer: coarse)").matches ||
+      window.innerWidth < 1024;
+
+    if (isTouchDevice) {
+      // Let touch devices use 100% native smooth momentum scrolling
+      return;
+    }
+
     let lenisInstance: Lenis | null = null;
-    let tickerCb: ((time: number) => void) | null = null;
+    let animId: number | null = null;
 
     async function initLenis() {
-      const { gsap, ScrollTrigger } = await import("@/animations");
-      gsap.registerPlugin(ScrollTrigger);
+      const { ScrollTrigger } = await import("@/animations");
 
       lenisInstance = new Lenis({
-        duration: 1.15,
-        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-        orientation: "vertical",
-        gestureOrientation: "vertical",
+        lerp: 0.1, // Smooth standard lerp ~0.1 as specified
         smoothWheel: true,
-        touchMultiplier: 1.25,
+        touchMultiplier: 0, // Never hijack touch
+        syncTouch: false,
       });
 
       lenisRef.current = lenisInstance;
@@ -39,22 +47,19 @@ export default function SmoothScrollProvider({
       // Sync Lenis scroll with GSAP ScrollTrigger
       lenisInstance.on("scroll", ScrollTrigger.update);
 
-      // Drive Lenis RAF loop via GSAP's synchronized ticker
-      tickerCb = (time: number) => {
-        lenisInstance?.raf(time * 1000);
-      };
-
-      gsap.ticker.add(tickerCb);
-      gsap.ticker.lagSmoothing(0);
+      // Standard single RAF loop (No GSAP ticker double-driving)
+      function raf(time: number) {
+        lenisInstance?.raf(time);
+        animId = requestAnimationFrame(raf);
+      }
+      animId = requestAnimationFrame(raf);
     }
 
     initLenis();
 
     return () => {
-      if (tickerCb) {
-        import("@/animations").then(({ gsap }) => {
-          if (tickerCb) gsap.ticker.remove(tickerCb);
-        });
+      if (animId !== null) {
+        cancelAnimationFrame(animId);
       }
       lenisInstance?.destroy();
       lenisRef.current = null;

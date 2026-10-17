@@ -184,12 +184,12 @@ export default function BismillahScene({ isVisible, onScrollToMain }: BismillahS
   return (
     <div
       ref={containerRef}
-      className="fixed inset-0 z-40 w-full h-full min-h-screen overflow-hidden flex flex-col items-center justify-center bg-emerald-deep text-ivory-warm select-none"
+      className="fixed inset-0 z-40 w-full h-full min-h-[100svh] overflow-hidden flex flex-col items-center justify-center bg-emerald-deep text-ivory-warm select-none"
       role="region"
       aria-label="Bismillah — Opening Blessing"
     >
       {/* ── 1. Fullscreen Sanctuary Interior Image (Matching DuaSection) ── */}
-      <div ref={bgImageRef} className="absolute inset-0 w-full h-full pointer-events-none will-change-transform">
+      <div ref={bgImageRef} className="absolute inset-0 w-full h-full pointer-events-none">
         <Image
           src="/dua-arch.jpg"
           alt="Islamic Wedding Sanctuary"

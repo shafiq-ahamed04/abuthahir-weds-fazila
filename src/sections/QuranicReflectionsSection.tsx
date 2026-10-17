@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, memo } from "react";
 import { weddingData } from "@/data/wedding";
 import { IslamicStar, ArabesqueCorner } from "@/components/elements/IslamicElements";
 import CinematicSplitHeading from "@/components/wedding/CinematicSplitHeading";
 
-export default function QuranicReflectionsSection() {
+function QuranicReflectionsSection() {
   const { verses } = weddingData;
   const sectionRef = useRef<HTMLElement>(null);
   const cardsRef = useRef<Array<HTMLDivElement | null>>([]);
@@ -38,6 +38,7 @@ export default function QuranicReflectionsSection() {
             scrollTrigger: {
               trigger: sectionRef.current,
               start: "top 78%",
+              once: true,
             },
           }
         );
@@ -99,7 +100,7 @@ export default function QuranicReflectionsSection() {
               ref={(el) => {
                 cardsRef.current[idx] = el;
               }}
-              className="relative flex flex-col justify-between p-6 sm:p-8 rounded-t-[70px] rounded-b-sm border border-gold-antique/30 bg-[#02211a]/85 backdrop-blur-sm transition-all duration-300 hover:border-gold-antique/60 hover:-translate-y-1.5 gold-foil-shimmer"
+              className="relative flex flex-col justify-between p-6 sm:p-8 rounded-t-[70px] rounded-b-sm border border-gold-antique/30 bg-[#02211a]/95 transition-all duration-300 hover:border-gold-antique/60 hover:-translate-y-1.5 gold-foil-shimmer"
               style={{
                 boxShadow: "0 15px 35px -10px rgba(0,0,0,0.5)",
               }}
@@ -150,3 +151,5 @@ export default function QuranicReflectionsSection() {
     </section>
   );
 }
+
+export default memo(QuranicReflectionsSection);

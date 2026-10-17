@@ -53,7 +53,7 @@ export function IslamicArchFrame({
   return (
     <div
       className={cn(
-        "relative rounded-t-[100px] sm:rounded-t-[140px] border border-gold-antique/30 p-6 sm:p-10 backdrop-blur-md bg-emerald-deep/40",
+        "relative rounded-t-[100px] sm:rounded-t-[140px] border border-gold-antique/30 p-6 sm:p-10 bg-[#02271F]/95",
         className
       )}
       style={{

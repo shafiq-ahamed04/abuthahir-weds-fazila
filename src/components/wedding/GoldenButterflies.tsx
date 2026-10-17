@@ -12,21 +12,19 @@ interface Butterfly {
   driftX: number;
 }
 
+const DEFAULT_BUTTERFLIES: Butterfly[] = [
+  { id: 1, startX: 18, startY: 28, scale: 0.85, duration: 14, delay: 0, driftX: 35 },
+  { id: 2, startX: 78, startY: 22, scale: 0.75, duration: 16, delay: 1.5, driftX: -25 },
+  { id: 3, startX: 14, startY: 62, scale: 0.9, duration: 15, delay: 3, driftX: 30 },
+  { id: 4, startX: 84, startY: 54, scale: 0.8, duration: 17, delay: 2, driftX: -35 },
+];
+
 export default function GoldenButterflies() {
-  const [butterflies, setButterflies] = useState<Butterfly[]>([]);
   const [reducedMotion, setReducedMotion] = useState(false);
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReducedMotion(mq.matches);
-
-    // 4 elegantly placed butterflies across the celestial sky (matching reference)
-    setButterflies([
-      { id: 1, startX: 18, startY: 28, scale: 0.85, duration: 14, delay: 0, driftX: 35 },
-      { id: 2, startX: 78, startY: 22, scale: 0.75, duration: 16, delay: 1.5, driftX: -25 },
-      { id: 3, startX: 14, startY: 62, scale: 0.9, duration: 15, delay: 3, driftX: 30 },
-      { id: 4, startX: 84, startY: 54, scale: 0.8, duration: 17, delay: 2, driftX: -35 },
-    ]);
+    if (mq.matches) setReducedMotion(true);
   }, []);
 
   if (reducedMotion) return null;
@@ -36,7 +34,7 @@ export default function GoldenButterflies() {
       className="absolute inset-0 pointer-events-none overflow-hidden z-10"
       aria-hidden="true"
     >
-      {butterflies.map((b) => (
+      {DEFAULT_BUTTERFLIES.map((b) => (
         <div
           key={b.id}
           className="absolute"

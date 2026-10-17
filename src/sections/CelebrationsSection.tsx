@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, memo } from "react";
 import Image from "next/image";
 import { weddingData } from "@/data/wedding";
 import { IslamicStar, ArabesqueCorner } from "@/components/elements/IslamicElements";
 import CinematicSplitHeading from "@/components/wedding/CinematicSplitHeading";
 import { GOLD_VENUE_BLUR_DATA_URL } from "@/lib/image-placeholders";
 
-export default function CelebrationsSection() {
+function CelebrationsSection() {
   const { events } = weddingData;
   const sectionRef = useRef<HTMLElement>(null);
   const cardsRef = useRef<Array<HTMLDivElement | null>>([]);
@@ -30,8 +30,10 @@ export default function CelebrationsSection() {
           return;
         }
 
-        // Layer 1: Background geometric lattice parallax drift
-        if (latticeRef.current) {
+        const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+
+        // Layer 1: Background geometric lattice parallax drift (Desktop only)
+        if (!isMobile && latticeRef.current) {
           gsap.to(latticeRef.current, {
             yPercent: -18,
             ease: "none",
@@ -44,8 +46,8 @@ export default function CelebrationsSection() {
           });
         }
 
-        // Layer 2: Ambient lanterns & stars parallax float
-        if (decorLeftRef.current && decorRightRef.current) {
+        // Layer 2: Ambient lanterns & stars parallax float (Desktop only)
+        if (!isMobile && decorLeftRef.current && decorRightRef.current) {
           gsap.to([decorLeftRef.current, decorRightRef.current], {
             yPercent: 30,
             ease: "none",
@@ -72,6 +74,7 @@ export default function CelebrationsSection() {
             scrollTrigger: {
               trigger: sectionRef.current,
               start: "top 75%",
+              once: true,
             },
           }
         );
@@ -94,7 +97,7 @@ export default function CelebrationsSection() {
       {/* ── Parallax Layer 1: Background Arabesque Lattice ── */}
       <div
         ref={latticeRef}
-        className="absolute -inset-y-24 inset-x-0 pointer-events-none opacity-20 will-change-transform"
+        className="absolute -inset-y-24 inset-x-0 pointer-events-none opacity-20"
         style={{
           backgroundImage:
             "radial-gradient(circle at 50% 50%, rgba(198,161,91,0.18) 1.5px, transparent 1.5px)",
@@ -105,7 +108,7 @@ export default function CelebrationsSection() {
       {/* ── Parallax Layer 2: Ambient Hanging Lantern Silhouettes ── */}
       <div
         ref={decorLeftRef}
-        className="absolute top-8 left-4 sm:left-12 opacity-30 pointer-events-none hidden md:block will-change-transform"
+        className="absolute top-8 left-4 sm:left-12 opacity-30 pointer-events-none hidden md:block"
       >
         <svg width="40" height="90" viewBox="0 0 40 90" fill="none" className="text-gold-antique">
           <line x1="20" y1="0" x2="20" y2="35" stroke="currentColor" strokeWidth="1" strokeDasharray="2 2" />
@@ -115,7 +118,7 @@ export default function CelebrationsSection() {
       </div>
       <div
         ref={decorRightRef}
-        className="absolute top-14 right-4 sm:right-12 opacity-30 pointer-events-none hidden md:block will-change-transform"
+        className="absolute top-14 right-4 sm:right-12 opacity-30 pointer-events-none hidden md:block"
       >
         <svg width="40" height="110" viewBox="0 0 40 110" fill="none" className="text-gold-antique">
           <line x1="20" y1="0" x2="20" y2="45" stroke="currentColor" strokeWidth="1" strokeDasharray="2 2" />
@@ -168,7 +171,7 @@ export default function CelebrationsSection() {
               ref={(el) => {
                 cardsRef.current[idx] = el;
               }}
-              className="group relative flex flex-col overflow-hidden rounded-sm border border-gold-antique/30 bg-[#02211a]/90 backdrop-blur-sm transition-all duration-300 hover:border-gold-antique/70 hover:shadow-[0_20px_50px_-15px_rgba(0,0,0,0.7)] gold-foil-shimmer"
+              className="group relative flex flex-col overflow-hidden rounded-sm border border-gold-antique/30 bg-[#02211a]/95 transition-all duration-300 hover:border-gold-antique/70 hover:shadow-[0_20px_50px_-15px_rgba(0,0,0,0.7)] gold-foil-shimmer"
             >
               {/* Event Image with Next.js blur placeholder (C1) */}
               <div className="relative w-full overflow-hidden" style={{ aspectRatio: "16/10" }}>
@@ -293,3 +296,5 @@ export default function CelebrationsSection() {
     </section>
   );
 }
+
+export default memo(CelebrationsSection);

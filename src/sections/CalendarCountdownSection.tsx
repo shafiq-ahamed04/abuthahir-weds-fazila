@@ -1,19 +1,13 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, memo } from "react";
 import Image from "next/image";
 import { weddingData } from "@/data/wedding";
 import { IslamicStar } from "@/components/elements/IslamicElements";
 import { GOLD_VENUE_BLUR_DATA_URL } from "@/lib/image-placeholders";
+import CountdownBoxes from "@/components/wedding/CountdownBoxes";
 
-interface TimeLeft {
-  days: number;
-  hours: number;
-  minutes: number;
-  seconds: number;
-}
-
-export default function CalendarCountdownSection() {
+function CalendarCountdownSection() {
   const { events } = weddingData;
   const sectionRef = useRef<HTMLElement>(null);
   const countdownColRef = useRef<HTMLDivElement>(null);
@@ -22,33 +16,6 @@ export default function CalendarCountdownSection() {
 
   // Target date: 21 March 2027 11:00 AM IST
   const targetDate = new Date("2027-03-21T11:00:00+05:30").getTime();
-
-  const [timeLeft, setTimeLeft] = useState<TimeLeft>({
-    days: 0,
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
-  });
-
-  useEffect(() => {
-    function updateCountdown() {
-      const now = new Date().getTime();
-      const difference = targetDate - now;
-
-      if (difference > 0) {
-        setTimeLeft({
-          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-          hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-          minutes: Math.floor((difference / 1000 / 60) % 60),
-          seconds: Math.floor((difference / 1000) % 60),
-        });
-      }
-    }
-
-    updateCountdown();
-    const interval = setInterval(updateCountdown, 1000);
-    return () => clearInterval(interval);
-  }, [targetDate]);
 
   // GSAP scroll animation
   useEffect(() => {
@@ -82,6 +49,7 @@ export default function CalendarCountdownSection() {
             scrollTrigger: {
               trigger: sectionRef.current,
               start: "top 78%",
+              once: true,
             },
           }
         );
@@ -180,54 +148,14 @@ export default function CalendarCountdownSection() {
 
             {/* Bottom Countdown Ticker */}
             <div className="relative z-10 pt-12">
-              <div className="grid grid-cols-4 gap-2 sm:gap-3 text-center">
-                {/* Days */}
-                <div className="flex flex-col items-center p-3 rounded border border-gold-antique/25 bg-[#02211a]/80 backdrop-blur-sm">
-                  <span className="font-serif text-2xl sm:text-3xl lg:text-4xl text-gold-antique font-light">
-                    {timeLeft.days}
-                  </span>
-                  <span className="font-sans text-[9px] uppercase tracking-wider text-ivory-warm/70 mt-1">
-                    Days
-                  </span>
-                </div>
-
-                {/* Hours */}
-                <div className="flex flex-col items-center p-3 rounded border border-gold-antique/25 bg-[#02211a]/80 backdrop-blur-sm">
-                  <span className="font-serif text-2xl sm:text-3xl lg:text-4xl text-gold-antique font-light">
-                    {timeLeft.hours}
-                  </span>
-                  <span className="font-sans text-[9px] uppercase tracking-wider text-ivory-warm/70 mt-1">
-                    Hours
-                  </span>
-                </div>
-
-                {/* Minutes */}
-                <div className="flex flex-col items-center p-3 rounded border border-gold-antique/25 bg-[#02211a]/80 backdrop-blur-sm">
-                  <span className="font-serif text-2xl sm:text-3xl lg:text-4xl text-gold-antique font-light">
-                    {timeLeft.minutes}
-                  </span>
-                  <span className="font-sans text-[9px] uppercase tracking-wider text-ivory-warm/70 mt-1">
-                    Minutes
-                  </span>
-                </div>
-
-                {/* Seconds */}
-                <div className="flex flex-col items-center p-3 rounded border border-gold-antique/25 bg-[#02211a]/80 backdrop-blur-sm">
-                  <span className="font-serif text-2xl sm:text-3xl lg:text-4xl text-gold-antique font-light">
-                    {timeLeft.seconds}
-                  </span>
-                  <span className="font-sans text-[9px] uppercase tracking-wider text-ivory-warm/70 mt-1">
-                    Seconds
-                  </span>
-                </div>
-              </div>
+              <CountdownBoxes targetDate={targetDate} />
             </div>
           </div>
 
           {/* Right Column: March 2027 Calendar & Add to Calendar Buttons + Gold Foil Shimmer */}
           <div
             ref={calendarColRef}
-            className="lg:col-span-7 flex flex-col justify-between p-6 sm:p-8 rounded-sm border border-gold-antique/30 bg-[#02211a]/90 backdrop-blur-sm gold-foil-shimmer shadow-[0_20px_50px_rgba(0,0,0,0.6)]"
+            className="lg:col-span-7 flex flex-col justify-between p-6 sm:p-8 rounded-sm border border-gold-antique/30 bg-[#02211a]/95 gold-foil-shimmer shadow-[0_20px_50px_rgba(0,0,0,0.6)]"
           >
             {/* Calendar Header */}
             <div className="flex flex-wrap items-center justify-between gap-2 pb-5 mb-5 border-b border-gold-antique/20">
@@ -402,3 +330,5 @@ export default function CalendarCountdownSection() {
     </section>
   );
 }
+
+export default memo(CalendarCountdownSection);

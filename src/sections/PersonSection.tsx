@@ -130,7 +130,7 @@ function PersonSection({ role }: PersonSectionProps) {
                   Hometown:
                 </span>
                 <span className="font-serif text-sm text-ivory-warm">
-                  {isGroom ? "Kumbakonam, Tamil Nadu" : "Trichy, Tamil Nadu"}
+                  {isGroom ? "Trichy, Tamil Nadu" : "Kumbakonam, Tamil Nadu"}
                 </span>
               </div>
             </div>

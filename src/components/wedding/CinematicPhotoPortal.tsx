@@ -323,7 +323,7 @@ export default function CinematicPhotoPortal({
                   رَبَّنَا هَبْ لَنَا مِنْ أَزْوَاجِنَا قُرَّةَ أَعْيُنٍ
                 </p>
                 <p className="font-sans text-[7.5px] sm:text-[8px] uppercase tracking-[0.28em] text-gold-antique/60">
-                  Kumbakonam, Tamil Nadu
+                  Trichy, Tamil Nadu
                 </p>
               </div>
             )}
@@ -345,7 +345,7 @@ export default function CinematicPhotoPortal({
                   وَجَعَلَ بَيْنَكُم مَّوَدَّةً وَرَحْمَةً
                 </p>
                 <p className="font-sans text-[7.5px] sm:text-[8px] uppercase tracking-[0.28em] text-gold-antique/60">
-                  Trichy, Tamil Nadu
+                  Kumbakonam, Tamil Nadu
                 </p>
               </div>
             )}
